@@ -20,3 +20,13 @@ Os HTMLs são gerados em `dashboards/` e funcionam offline. **Eles contêm os da
 - Painel principal: `modelo2_centro_de_comando.html`.
 
 Uso interno.
+
+## Botão "Atualizar painel"
+
+`Atualizar painel.bat` (atalho "Atualizar painel DPO" na Área de Trabalho):
+
+1. `automacao/lancar_fechamentos.py` — lê os PPTX de fechamento das pastas **verdes** do semestre, mostra o que vai lançar e, com confirmação (S), grava na Matriz (backup em `backups/`) e marca as pastas de azul.
+2. `dashboards/gerar_dashboards.py` — regera o painel (`index.html`) e a cópia no OneDrive.
+3. Commit e push para o GitHub.
+
+Semestre configurado em `PASTA_SEMESTRE` / `ANO` / `SEMESTRE` no início de `lancar_fechamentos.py`.

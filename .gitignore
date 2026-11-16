@@ -1,4 +1,4 @@
-# Painéis gerados: contêm os dados das auditorias embutidos -> não versionar
+# PainÃ©is gerados: contÃªm os dados das auditorias embutidos -> nÃ£o versionar
 /dashboards/*.html
 
 # Planilhas, bases e atalhos locais (dados internos e pessoais)
@@ -13,3 +13,6 @@ BASE_APP_AUDITORIA*
 # Python
 __pycache__/
 *.pyc
+
+# Backups automaticos da Matriz
+backups/

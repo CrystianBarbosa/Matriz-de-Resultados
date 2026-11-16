@@ -9,7 +9,17 @@ echo  ================================================
 echo   Visitas Demarco - DPO : atualizando o painel
 echo  ================================================
 echo.
-echo  [1/3] Gerando o painel com os dados mais recentes...
+echo  [1/4] Lancando na Matriz os fechamentos das pastas VERDES...
+python "automacao\lancar_fechamentos.py"
+if errorlevel 1 (
+  echo.
+  echo  ERRO no lancamento. A Matriz nao foi alterada. Verifique se ela esta fechada no Excel.
+  pause
+  exit /b 1
+)
+
+echo.
+echo  [2/4] Gerando o painel com os dados mais recentes...
 python "dashboards\gerar_dashboards.py"
 if errorlevel 1 (
   echo.
@@ -19,20 +29,18 @@ if errorlevel 1 (
 )
 
 echo.
-echo  [2/3] Registrando a nova versao...
-git add index.html dashboards\gerar_dashboards.py dashboards\templates README.md .gitignore "Atualizar painel.bat"
-git diff --cached --quiet
-if not errorlevel 1 (
-  echo  Nenhuma mudanca desde a ultima publicacao. Nada para enviar.
-  echo.
-  pause
-  exit /b 0
-)
+echo  [3/4] Registrando a nova versao...
+git add index.html dashboards\gerar_dashboards.py dashboards\templates automacao README.md .gitignore "Atualizar painel.bat"
 for /f "tokens=*" %%d in ('powershell -NoProfile -Command "Get-Date -Format \"dd/MM/yyyy HH:mm\""') do set AGORA=%%d
-git commit -q -m "Atualizacao do painel - %AGORA%"
+git diff --cached --quiet
+if errorlevel 1 (
+  git commit -q -m "Atualizacao do painel - %AGORA%"
+) else (
+  echo  Nenhuma mudanca nova no painel.
+)
 
 echo.
-echo  [3/3] Enviando para o GitHub...
+echo  [4/4] Enviando para o GitHub...
 git push
 if errorlevel 1 (
   echo.
