@@ -10,6 +10,8 @@ warnings.filterwarnings("ignore")
 AQUI = os.path.dirname(os.path.abspath(__file__))
 PLANILHA = r"C:\Users\Crystian\OneDrive - DEMARCO PARTICIPACOES E SERVICOS LTDA\DGGO3Auditores - Matriz de Visitas\Matriz Visitas 2025.xlsx"
 EXCLUIR_TIPOS = {"UDC"}  # UDCs fora do escopo
+# Cópia do painel principal para compartilhar internamente (OneDrive/SharePoint da empresa)
+PUBLICAR_PAINEL = (os.path.join(os.path.dirname(PLANILHA), "Painel Visitas Demarco - DPO.html"), "modelo2_centro_de_comando.html")
 
 # Base do app de auditoria (perguntas do Check MTE e Check Ambiental).
 # Usa o arquivo BASE_APP_AUDITORIA*.xlsx mais recente encontrado nestas pastas.
@@ -224,6 +226,13 @@ def main():
         html = tpl.replace("/*__DATA__*/", js_dados).replace("/*__CORE__*/", core)
         open(os.path.join(AQUI, nome + ".html"), "w", encoding="utf-8").write(html)
         print("gerado:", nome + ".html")
+    destino, origem = PUBLICAR_PAINEL
+    try:
+        import shutil
+        shutil.copyfile(os.path.join(AQUI, origem), destino)
+        print("publicado no OneDrive:", destino)
+    except OSError as e:
+        print("aviso: não foi possível copiar o painel para o OneDrive:", e)
     print(f"{len(dados['recs'])} auditorias · {len(dados['notes'])} notas")
     for n in dados["notes"]:
         print("  -", n)
