@@ -338,7 +338,7 @@ footer{margin-top:18px;color:var(--muted);font-size:11.5px;text-align:center}
   </div>
 
   <div class="view" id="view" role="tabpanel"></div>
-  <div id="notes"></div>
+
   <footer>Uso interno · Proibido o compartilhamento ou reprodução deste material sem autorização.</footer>
 </div>
 
@@ -732,7 +732,7 @@ function viewCheck(k){
     `<div class="card kpi"><div class="lab">Ano contra ano<span>${YEARS[0]}→${YEARS[YEARS.length-1]}</span></div><div class="yrs">${YEARS.map((y,i)=>`<div>${y}<b>${fmtPct(ys[i])}</b></div>`).join('')}</div>
       <div class="cmp"><span class="cl">Evolução ${YEARS[YEARS.length-1]} × ${YEARS[0]}<small>relativa: ${fmtRel(ys[0],ys[ys.length-1])}</small></span>${d0===null?'—':deltaHTML(d0)}</div></div>`+
     `<div class="card kpi"><div class="lab">Melhoraram<span>${st.geo?'Geo '+esc(st.geo):'geral'}</span></div><div class="cnt up">${up}</div><div class="cmp"><span class="cl">unidades vs auditoria anterior<small>de ${us.length} com duas auditorias ou mais</small></span></div></div>`+
-    `<div class="card kpi"><div class="lab">Pioraram<span>${st.geo?'Geo '+esc(st.geo):'geral'}</span></div><div class="cnt down">${dn}</div><div class="cmp"><span class="cl">unidades vs auditoria anterior<small>${eq} mantiveram o resultado</small></span></div></div>`;
+    `<div class="card kpi"><div class="lab">Pioraram<span>${st.geo?'Geo '+esc(st.geo):'geral'}</span></div><div class="cnt down">${dn}</div><div class="cmp"><span class="cl">unidades vs auditoria anterior<small>de ${us.length} com duas auditorias ou mais</small></span></div></div>`;
   kc.after();
   const m=document.createElement('div');m.className='main';V.appendChild(m);
   if(st.u){
@@ -768,7 +768,7 @@ if(UNITS.includes(hp.get('u')))st.u=hp.get('u');
 makeCombo(fGeo,'Digite para buscar a Geo…');makeCombo(fUn,'Digite para buscar a unidade…');
 fillUnits();
 render();
-document.getElementById('notes').innerHTML=notesHTML();
+
 })();
 </script>
 </body>

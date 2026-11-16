@@ -150,7 +150,7 @@ footer{margin-top:28px;color:var(--muted);font-size:12px;text-align:center}
     <div class="insights" id="ins"></div>
   </section>
 
-  <div id="notes"></div>
+  
   <footer>Uso interno · Proibido o compartilhamento ou reprodução deste material sem autorização.</footer>
 </div>
 
@@ -259,7 +259,7 @@ const full=lp.filter(r=>r.dist===1&&(r.arm===1||r.arm===null)&&r.man===1).length
 ins.push([full,`unidades fecharam ${pLabel(lastP)} com Frota em Nível 1, Armazém em Nível 1 (quando auditado) e 100% em Manutenção.`]);
 ins.push([up,`unidades melhoraram o nível de frota em relação à visita anterior; ${down} pioraram.`]);
 document.getElementById('ins').innerHTML=ins.map(([k,t])=>`<div class="ins"><div class="k">${k}</div><p>${t}</p></div>`).join('');
-document.getElementById('notes').innerHTML=notesHTML();
+
 })();
 </script>
 </body>

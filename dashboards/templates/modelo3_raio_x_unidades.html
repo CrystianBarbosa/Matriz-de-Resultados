@@ -134,7 +134,7 @@ footer{margin-top:18px;color:var(--muted);font-size:11.5px;text-align:center}
       <div class="hd"><div><h3>Tabela geral · última auditoria de cada unidade</h3><p class="cap" style="margin:0">Clique no cabeçalho para ordenar e na linha para abrir a unidade. Δ = variação vs. auditoria anterior.</p></div><div class="sp"></div><button class="btn" id="csv" type="button">Exportar CSV</button></div>
       <div class="tblwrap"><table id="all"></table></div>
     </div>
-    <div id="notes"></div>
+    
     <footer>Uso interno · Proibido o compartilhamento ou reprodução deste material sem autorização.</footer>
   </main>
 </div>
@@ -228,7 +228,7 @@ document.getElementById('csv').onclick=()=>downloadCSV('raio_x_unidades.csv',COL
 drawAll();
 const h=decodeURIComponent(location.hash.slice(1));
 open(UNITS.includes(h)?h:[...UNITS].sort((a,b)=>info[b].rows.length-info[a].rows.length||a.localeCompare(b))[0]);
-document.getElementById('notes').innerHTML=notesHTML();
+
 })();
 </script>
 </body>
