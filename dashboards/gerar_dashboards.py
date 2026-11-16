@@ -25,13 +25,24 @@ ALIAS_UNIDADE = {               # nome no app de auditoria -> nome na Matriz (se
     "CDL PERNAMBUCO": "CD RECIFE",
 }
 # Unidades da Matriz que são a mesma operação: nome antigo -> nome que fica (e Geo correta)
-UNIFICAR_UNIDADE = {"CD OLINDA": "CD RECIFE"}
-GEO_FIXA = {"CD RECIFE": "NE"}
+# chave (sem acento, maiúsculas) do nome na Matriz -> nome que fica no painel (pode ter acento)
+UNIFICAR_UNIDADE = {
+    "CD OLINDA": "CD RECIFE", "CD SERGIPE": "CD ARACAJU",
+    "CDI CUIABA": "CD CUIABÁ", "CD CUIABA": "CD CUIABÁ",
+    "CD OSASCO": "CDL OSASCO",
+    "CDL CAMPINA GRANDE": "CD CAMPINA GRANDE",
+    "AS CAMPO GRANDE": "CD CAMPO GRANDE", "CDI CAMPO GRANDE": "CD CAMPO GRANDE",
+    "CDR CAMACARI": "CDL CAMAÇARI", "CDL CAMACARI": "CDL CAMAÇARI",
+    "CD CEARA": "CD CEARÁ",
+}
+# Geo correta da unidade unificada (chave sem acento)
+GEO_FIXA = {"CD RECIFE": "NE", "CD ARACAJU": "NE", "CD CUIABA": "CO", "CDL OSASCO": "SP",
+            "CD CAMPINA GRANDE": "NE", "CD CAMPO GRANDE": "RJ/ES", "CDL CAMACARI": "NE", "CD CEARA": "NO"}
 # Quando a unidade tem mais de um lançamento no mesmo semestre, por padrão vale o mais recente.
 # Aqui ficam as exceções definidas pelo usuário: (unidade na Matriz, "ANO 1H/2H") -> data do lançamento a usar.
 AUDITORIA_PREFERIDA = {
     ("CD GUARULHOS", "2025 1H"): "23/01/2025",
-}   # as linhas de CD OLINDA estão com Geo "SP" na Matriz
+}
 
 
 def chave(s):
@@ -70,12 +81,15 @@ def carregar():
             notas.append(f"{uni} {ano} {sem}: valor de {nome} \"{v}\" (linha {r}) não é numérico — desconsiderado.")
             return None
 
-        k = chave(uni)
+        k0 = k = chave(uni)
         if k in UNIFICAR_UNIDADE:
-            notas_unif.add(f"{str(uni).strip()} unificada com {UNIFICAR_UNIDADE[k]} (mesma unidade) — resultados exibidos como {UNIFICAR_UNIDADE[k]}.")
-            uni = k = UNIFICAR_UNIDADE[k]
+            alvo = UNIFICAR_UNIDADE[k]
+            if chave(alvo) != k:
+                notas_unif.add(f"{str(uni).strip()} unificada com {alvo} (mesma unidade) — resultados exibidos como {alvo}.")
+            uni, k = alvo, chave(alvo)
+            tipo = alvo.split()[0].upper()
         geo = GEO_FIXA.get(k, geo)
-        brutos.append(dict(linha=r, geo=geo, uni=str(uni).strip(), k=k, tipo=tipo, ano=int(ano), sem=str(sem).strip().upper(),
+        brutos.append(dict(linha=r, geo=geo, uni=str(uni).strip(), k=k, orig=(k0 == k), tipo=tipo, ano=int(ano), sem=str(sem).strip().upper(),
                            dist=lvl(dist), arm=lvl(arm), mte=pct(mte, "MTE"), man=pct(man, "Manutenção"), amb=pct(amb, "Ambiental")))
 
     # nome e Geo de exibição = os da auditoria mais recente da unidade (variações de acento unificadas)
@@ -90,7 +104,8 @@ def carregar():
             notas.append(f"Grafias diferentes unificadas como \"{ult[k]['uni']}\": {', '.join(sorted(vs))}.")
 
     vistos, recs = {}, []
-    for b in brutos:
+    # em semestre repetido após unificar, prevalece a linha cujo nome original já era o nome que fica
+    for b in sorted(brutos, key=lambda b: not b["orig"]):
         id_ = (b["k"], b["ano"], b["sem"])
         sig = (b["dist"], b["arm"], b["mte"], b["man"], b["amb"])
         if id_ in vistos:
@@ -156,7 +171,7 @@ def carregar_checklist(unidades_matriz):
         h = hist.get(hid)
         if not h:
             sem_hist += len(rs); continue
-        k = chave(unidade_hist(h)); k = ALIAS_UNIDADE.get(k, k); k = UNIFICAR_UNIDADE.get(k, k)
+        k = chave(unidade_hist(h)); k = ALIAS_UNIDADE.get(k, k); k = chave(UNIFICAR_UNIDADE.get(k, k))
         if k.split(" ")[0] in EXCLUIR_TIPOS:
             continue
         u = por_chave.get(k)
