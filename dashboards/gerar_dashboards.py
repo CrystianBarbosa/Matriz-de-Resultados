@@ -226,13 +226,16 @@ def main():
         html = tpl.replace("/*__DATA__*/", js_dados).replace("/*__CORE__*/", core)
         open(os.path.join(AQUI, nome + ".html"), "w", encoding="utf-8").write(html)
         print("gerado:", nome + ".html")
+    import shutil
     destino, origem = PUBLICAR_PAINEL
     try:
-        import shutil
         shutil.copyfile(os.path.join(AQUI, origem), destino)
         print("publicado no OneDrive:", destino)
     except OSError as e:
         print("aviso: não foi possível copiar o painel para o OneDrive:", e)
+    # cópia na raiz do repositório (é o arquivo publicado no GitHub)
+    shutil.copyfile(os.path.join(AQUI, origem), os.path.join(os.path.dirname(AQUI), "index.html"))
+    print("index.html atualizado na raiz do repositório")
     print(f"{len(dados['recs'])} auditorias · {len(dados['notes'])} notas")
     for n in dados["notes"]:
         print("  -", n)
