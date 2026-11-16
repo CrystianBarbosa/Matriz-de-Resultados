@@ -93,7 +93,7 @@ select,input[type=search]{background:var(--surface-2);color:var(--ink);border:1p
 .card h2{font-size:15px;margin:0;font-weight:700}
 .card .cap{color:var(--muted);font-size:12.5px;margin:2px 0 12px}
 .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.kpis.k4{grid-template-columns:repeat(4,1fr)}
+.kpis.k4{grid-template-columns:repeat(4,1fr)} .kpis.k5{grid-template-columns:1.25fr 1.25fr 1fr 1fr 1fr}
 .kpi .lab{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:650;display:flex;justify-content:space-between}
 .kpi .lab span{text-transform:none;letter-spacing:0;font-weight:600;color:var(--ink-2)}
 .kpi .row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:6px}
@@ -230,6 +230,11 @@ table.heat{border-collapse:separate;border-spacing:2px;width:100%;font-size:12.5
 .cktab.nk{margin-top:12px}
 .nkl{margin-top:12px;display:grid;gap:14px}
 .nkh{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;font-weight:600;margin-bottom:8px}
+.mvk{text-align:left;font:inherit;color:inherit;border:0;cursor:pointer;transition:box-shadow .15s}
+.mvk:hover{box-shadow:0 0 0 2px var(--s1)} .mvk.on{box-shadow:0 0 0 2px var(--accent)}
+.cnt.flat{color:var(--ink-2)}
+.mvh{font-size:12px;font-weight:700;color:var(--s1);white-space:nowrap;align-self:flex-end}
+.mvlist{margin-top:0}
 .yy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .yy-grid.g2{grid-template-columns:repeat(2,1fr)} .yy-grid.g1{grid-template-columns:1fr}
 .yy-grid .card{background:var(--surface-2)}
@@ -248,8 +253,8 @@ text.seg{font-size:10.5px;font-weight:700}.blab{font-size:12px;fill:var(--ink-2)
 .notes summary{cursor:pointer;font-weight:650;color:var(--ink)}
 footer{margin-top:18px;color:var(--muted);font-size:11.5px;text-align:center}
 :focus-visible{outline:2px solid var(--s1);outline-offset:2px}
-@media (max-width:1180px){.main,.grid2{grid-template-columns:1fr}.kpis,.kpis.k4{grid-template-columns:repeat(2,1fr)}.yy-grid,.yy-grid.g2{grid-template-columns:1fr}}
-@media (max-width:640px){.wrap{padding:16px}.kpis,.kpis.k4{grid-template-columns:1fr}.bar{position:static}#f-un{min-width:0;width:100%}.ctx{margin-left:0}.tabs button{padding:8px 12px;font-size:13px}}
+@media (max-width:1180px){.main,.grid2{grid-template-columns:1fr}.kpis,.kpis.k4,.kpis.k5{grid-template-columns:repeat(2,1fr)}.yy-grid,.yy-grid.g2{grid-template-columns:1fr}}
+@media (max-width:640px){.wrap{padding:16px}.kpis,.kpis.k4,.kpis.k5{grid-template-columns:1fr}.bar{position:static}#f-un{min-width:0;width:100%}.ctx{margin-left:0}.tabs button{padding:8px 12px;font-size:13px}}
 </style>
 </head>
 <body>
@@ -585,7 +590,7 @@ const CK=DATA.chk||null;
 const CKQ=CK?CK.q.map((q,i)=>({i,chk:q[0],grp:q[1],ord:q[2],txt:q[3]})):[];
 const CKA=CK?CK.a.map(a=>({chk:a[0],u:a[1],p:a[2],d:a[3],r:a[4]})):[];
 const RL=['OK','NOK','N/A','—'],RC=['ok','nok','na','nr'];
-Object.assign(st,{ckp:{},ckshow:{}});
+Object.assign(st,{ckp:{},ckshow:{},mvsel:null});
 const ansChip=(c,small)=>`<span class="ans ${RC[c]}${small?' sm':''}">${RL[c]}</span>`;
 function ckPeriods(k){return [...new Set(CKA.filter(a=>a.chk===k).map(a=>a.p))].sort();}
 
@@ -722,17 +727,29 @@ function viewFA(){
 /* ========== ABAS DE CHECK (MTE / Manutenção / Ambiental) ========== */
 function viewCheck(k){
   const rows=rowsF();
-  const hero=document.createElement('div');hero.className='kpis k4';V.appendChild(hero);
+  const hero=document.createElement('div');hero.className='kpis k5';V.appendChild(hero);
   const kc=kpiCard(k,rows,{label:IND[k].lab});
   const ys=YEARS.map(y=>metric(byYear(rows,y),k));
-  const us=unitSeries(rowsGeo()).map(u=>improve(lastTwo(u,k),k)).filter(d=>d!==null);
-  const up=us.filter(d=>sign(d)>0).length,dn=us.filter(d=>sign(d)<0).length,eq=us.length-up-dn;
+  const cmpU=unitSeries(rowsGeo()).map(u=>({u,lt:lastTwo(u,k)})).filter(o=>o.lt&&o.lt.prev!==null).map(o=>({...o,d:improve(o.lt,k)}));
+  const grp={up:cmpU.filter(o=>sign(o.d)>0),dn:cmpU.filter(o=>sign(o.d)<0),eq:cmpU.filter(o=>sign(o.d)===0)};
   const d0=ys[0]!==null&&ys[ys.length-1]!==null?ys[ys.length-1]-ys[0]:null;
+  const scope=st.geo?'Geo '+esc(st.geo):'geral';
+  const mv=(key,lab,cls)=>`<button type="button" class="card kpi mvk ${key}${st.mvsel===key?' on':''}" data-mv="${key}" aria-pressed="${st.mvsel===key}"><div class="lab">${lab}<span>${scope}</span></div><div class="cnt ${cls}">${grp[key].length}</div><div class="cmp"><span class="cl">unidades vs auditoria anterior<small>de ${cmpU.length} com duas auditorias ou mais</small></span><span class="mvh">${st.mvsel===key?'▴ ocultar':'▾ ver unidades'}</span></div></button>`;
   hero.innerHTML=kc.html+
     `<div class="card kpi"><div class="lab">Ano contra ano<span>${YEARS[0]}→${YEARS[YEARS.length-1]}</span></div><div class="yrs">${YEARS.map((y,i)=>`<div>${y}<b>${fmtPct(ys[i])}</b></div>`).join('')}</div>
       <div class="cmp"><span class="cl">Evolução ${YEARS[YEARS.length-1]} × ${YEARS[0]}<small>relativa: ${fmtRel(ys[0],ys[ys.length-1])}</small></span>${d0===null?'—':deltaHTML(d0)}</div></div>`+
-    `<div class="card kpi"><div class="lab">Melhoraram<span>${st.geo?'Geo '+esc(st.geo):'geral'}</span></div><div class="cnt up">${up}</div><div class="cmp"><span class="cl">unidades vs auditoria anterior<small>de ${us.length} com duas auditorias ou mais</small></span></div></div>`+
-    `<div class="card kpi"><div class="lab">Pioraram<span>${st.geo?'Geo '+esc(st.geo):'geral'}</span></div><div class="cnt down">${dn}</div><div class="cmp"><span class="cl">unidades vs auditoria anterior<small>de ${us.length} com duas auditorias ou mais</small></span></div></div>`;
+    mv('up','Melhoraram','up')+mv('dn','Pioraram','down')+mv('eq','Mantiveram','flat');
+  hero.querySelectorAll('[data-mv]').forEach(b=>b.onclick=()=>{st.mvsel=st.mvsel===b.dataset.mv?null:b.dataset.mv;render();
+    requestAnimationFrame(()=>document.getElementById('mvlist')?.scrollIntoView({block:'nearest',behavior:'smooth'}));});
+  if(st.mvsel&&grp[st.mvsel]){
+    const L=grp[st.mvsel].sort((a,b)=>st.mvsel==='eq'?a.u.u.localeCompare(b.u.u,'pt-BR'):Math.abs(b.d)-Math.abs(a.d)||a.u.u.localeCompare(b.u.u,'pt-BR'));
+    const tit={up:'melhoraram',dn:'pioraram',eq:'mantiveram o resultado'}[st.mvsel];
+    const box=document.createElement('div');box.className='card mvlist';box.id='mvlist';V.appendChild(box);
+    box.innerHTML=`<div class="lvf-h"><b>${L.length} unidade${L.length===1?'':'s'} que ${tit} · ${esc(IND[k].lab)}</b><span class="z">${scope} · penúltima × última auditoria de cada unidade</span><button type="button" class="lvf-x">× Fechar</button></div>
+      <div class="lvf-u">${L.map(o=>`<a href="#" data-u="${esc(o.u.u)}">${esc(o.u.u)}<small>${esc(o.u.geo||'')} · ${pLabel(o.lt.pp)} ${fmtCell(o.lt.prev,k)} → ${pLabel(o.lt.lp)} ${fmtCell(o.lt.last,k)}</small>${st.mvsel==='eq'?'':`<i class="${st.mvsel==='up'?'up':'down'}">${fmtPP(o.d).replace(' p.p.','')}</i>`}</a>`).join('')}</div>`;
+    box.querySelector('.lvf-x').onclick=()=>{st.mvsel=null;render();};
+    box.onclick=e=>{const a=e.target.closest('a[data-u]');if(a){e.preventDefault();st.mvsel=null;pickUnit(a.dataset.u);}};
+  }
   kc.after();
   const m=document.createElement('div');m.className='main';V.appendChild(m);
   if(st.u){
