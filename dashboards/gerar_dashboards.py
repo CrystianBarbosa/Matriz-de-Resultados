@@ -10,6 +10,8 @@ warnings.filterwarnings("ignore")
 AQUI = os.path.dirname(os.path.abspath(__file__))
 PLANILHA = r"C:\Users\Crystian\OneDrive - DEMARCO PARTICIPACOES E SERVICOS LTDA\DGGO3Auditores - Matriz de Visitas\Matriz Visitas 2025.xlsx"
 EXCLUIR_TIPOS = {"UDC"}  # UDCs fora do escopo
+# Unidades desativadas: saem dos painéis (chave sem acento, maiúsculas)
+EXCLUIR_UNIDADES = {"CD NOVA IGUACU"}
 # Cópia do painel principal para compartilhar internamente (OneDrive/SharePoint da empresa)
 PUBLICAR_PAINEL = (os.path.join(os.path.dirname(PLANILHA), "Painel Visitas Demarco - DPO.html"), "modelo2_centro_de_comando.html")
 
@@ -83,6 +85,8 @@ def carregar():
             return None
 
         k0 = k = chave(uni)
+        if k in EXCLUIR_UNIDADES:
+            continue
         if k in UNIFICAR_UNIDADE:
             alvo = UNIFICAR_UNIDADE[k]
             if chave(alvo) != k:
@@ -173,7 +177,7 @@ def carregar_checklist(unidades_matriz):
         if not h:
             sem_hist += len(rs); continue
         k = chave(unidade_hist(h)); k = ALIAS_UNIDADE.get(k, k); k = chave(UNIFICAR_UNIDADE.get(k, k))
-        if k.split(" ")[0] in EXCLUIR_TIPOS:
+        if k.split(" ")[0] in EXCLUIR_TIPOS or k in EXCLUIR_UNIDADES:
             continue
         u = por_chave.get(k)
         if not u:
