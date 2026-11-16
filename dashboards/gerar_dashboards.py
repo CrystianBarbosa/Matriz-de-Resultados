@@ -34,10 +34,11 @@ UNIFICAR_UNIDADE = {
     "AS CAMPO GRANDE": "CD CAMPO GRANDE", "CDI CAMPO GRANDE": "CD CAMPO GRANDE",
     "CDR CAMACARI": "CDL CAMAÇARI", "CDL CAMACARI": "CDL CAMAÇARI",
     "CD CEARA": "CD CEARÁ",
+    "CDI EQUATORIAL": "CD SÃO LUÍS", "CD SAO LUIS": "CD SÃO LUÍS",
 }
 # Geo correta da unidade unificada (chave sem acento)
 GEO_FIXA = {"CD RECIFE": "NE", "CD ARACAJU": "NE", "CD CUIABA": "CO", "CDL OSASCO": "SP",
-            "CD CAMPINA GRANDE": "NE", "CD CAMPO GRANDE": "RJ/ES", "CDL CAMACARI": "NE", "CD CEARA": "NO"}
+            "CD CAMPINA GRANDE": "NE", "CD CAMPO GRANDE": "RJ/ES", "CDL CAMACARI": "NE", "CD CEARA": "NO", "CD SAO LUIS": "NO"}
 # Quando a unidade tem mais de um lançamento no mesmo semestre, por padrão vale o mais recente.
 # Aqui ficam as exceções definidas pelo usuário: (unidade na Matriz, "ANO 1H/2H") -> data do lançamento a usar.
 AUDITORIA_PREFERIDA = {
