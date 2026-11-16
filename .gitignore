@@ -1,0 +1,15 @@
+# Painéis gerados: contêm os dados das auditorias embutidos -> não versionar
+/dashboards/*.html
+
+# Planilhas, bases e atalhos locais (dados internos e pessoais)
+*.xlsx
+*.xlsm
+*.xls
+*.csv
+*.lnk
+BASE_APP_AUDITORIA*
+~$*
+
+# Python
+__pycache__/
+*.pyc

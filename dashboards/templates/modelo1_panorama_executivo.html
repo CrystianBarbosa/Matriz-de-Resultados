@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panorama Executivo de Visitas</title>
+<style>
+:root{
+  color-scheme:light;
+  --page:#f6f5f1; --surface:#fffefb; --surface-2:#f1efe8; --ink:#0b0b0b; --ink-2:#52514e; --muted:#7d7b75;
+  --grid:#e7e5de; --axis:#c3c2b7; --ring:rgba(11,11,11,.08);
+  --accent:#f5c400; --accent-ink:#0b0b0b; --accent-soft:#fff4c2;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+  --pos:#0ca30c; --neg:#d03b3b; --pos-ink:#006300; --neg-ink:#b42323;
+  --l1:#1baf7a; --l2:#9085e9; --l3:#2a78d6; --l4:#eda100; --l5:#e34948;
+  --l1-ink:#0b0b0b; --l2-ink:#0b0b0b; --l3-ink:#fff; --l4-ink:#0b0b0b; --l5-ink:#fff;
+  --seq:#e6effb,#cde2fb,#9ec5f4,#6da7ec,#3987e5,#256abf,#184f95;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --page:#0f0f0e; --surface:#1a1a19; --surface-2:#232321; --ink:#f0efec; --ink-2:#c3c2b7; --muted:#8f8d86;
+  --grid:#2c2c2a; --axis:#45453f; --ring:rgba(255,255,255,.08);
+  --accent:#f5c400; --accent-soft:#3a3010;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --pos-ink:#3fcf3f; --neg-ink:#ff7b7b;
+  --l1:#199e70; --l2:#9085e9; --l3:#3987e5; --l4:#c98500; --l5:#e66767; --l1-ink:#fff;
+  --seq:#1d2a3b,#184f95,#1c5cab,#256abf,#2a78d6,#5598e7,#86b6ef;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --page:#0f0f0e; --surface:#1a1a19; --surface-2:#232321; --ink:#f0efec; --ink-2:#c3c2b7; --muted:#8f8d86;
+  --grid:#2c2c2a; --axis:#45453f; --ring:rgba(255,255,255,.08);
+  --accent:#f5c400; --accent-soft:#3a3010;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --pos-ink:#3fcf3f; --neg-ink:#ff7b7b;
+  --l1:#199e70; --l2:#9085e9; --l3:#3987e5; --l4:#c98500; --l5:#e66767; --l1-ink:#fff;
+  --seq:#1d2a3b,#184f95,#1c5cab,#256abf,#2a78d6,#5598e7,#86b6ef;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--page);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px 64px}
+header.hero{position:relative;padding:56px 0 40px;border-bottom:1px solid var(--grid);margin-bottom:40px}
+header.hero::before{content:"";position:absolute;left:0;top:0;width:72px;height:6px;background:var(--accent);border-radius:0 0 4px 4px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font-size:clamp(34px,5vw,58px);line-height:1.02;letter-spacing:-.03em;margin:14px 0 14px;font-weight:800;max-width:900px}
+h1 em{font-style:normal;white-space:nowrap;background:linear-gradient(transparent 62%,var(--accent) 62%,var(--accent) 92%,transparent 92%);padding:0 4px}
+.lede{font-size:18px;color:var(--ink-2);max-width:760px;margin:0}
+.meta{display:flex;gap:28px;flex-wrap:wrap;margin-top:28px}
+.meta div{font-size:13px;color:var(--muted)} .meta b{display:block;font-size:26px;color:var(--ink);letter-spacing:-.02em;font-weight:700}
+.toggle{position:absolute;right:0;top:56px;border:1px solid var(--grid);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:7px 14px;font:inherit;font-size:13px;cursor:pointer}
+section{margin:56px 0}
+.sec-h{display:flex;align-items:baseline;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+.sec-h .num{font-size:13px;font-weight:700;color:var(--accent-ink);background:var(--accent);border-radius:6px;padding:2px 8px}
+h2{font-size:26px;letter-spacing:-.02em;margin:0;font-weight:750}
+.sec-h p{margin:0;color:var(--muted);font-size:14px;flex-basis:100%}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.card{background:var(--surface);border-radius:16px;box-shadow:0 0 0 1px var(--ring),0 1px 2px rgba(0,0,0,.03);padding:20px}
+.kpi .lab{font-size:13px;color:var(--ink-2);font-weight:600;min-height:40px}
+.kpi .big{font-size:40px;font-weight:780;letter-spacing:-.035em;line-height:1;margin:6px 0 4px}
+.kpi .sub{font-size:12px;color:var(--muted)}
+.kpi .rows{margin-top:12px;display:grid;gap:4px;font-size:12.5px;color:var(--ink-2)}
+.kpi .rows div{display:flex;justify-content:space-between;gap:8px}
+.kpi .spark{height:40px;margin-top:12px}
+.delta{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.delta.up{color:var(--pos-ink)} .delta.down{color:var(--neg-ink)} .delta.flat{color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;text-align:right;padding:10px 12px;border-bottom:1px solid var(--grid);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:14px 12px;border-bottom:1px solid var(--grid);text-align:right;font-variant-numeric:tabular-nums;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td .ind{font-weight:700;color:var(--ink)} td .ind small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.yv{display:inline-flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:70px}
+.yv .bar{height:4px;border-radius:2px;background:var(--s1);opacity:.85}
+.yv.y2024 .bar{opacity:.35}.yv.y2025 .bar{opacity:.6}
+td.hl{background:var(--accent-soft)}
+.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:16px}
+.grid2b{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card h3{margin:0 0 2px;font-size:16px;font-weight:700}
+.card .cap{margin:0 0 14px;color:var(--muted);font-size:13px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);margin-bottom:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.tabs{display:inline-flex;background:var(--surface-2);border-radius:999px;padding:3px;gap:2px;margin-bottom:16px;flex-wrap:wrap}
+.tabs button{border:0;background:transparent;color:var(--ink-2);font:inherit;font-size:13px;padding:6px 14px;border-radius:999px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:650;box-shadow:0 0 0 1px var(--ring)}
+.heat td.c{font-weight:650}
+.insights{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ins{padding:22px;border-radius:16px;background:var(--surface);box-shadow:0 0 0 1px var(--ring);position:relative;overflow:hidden}
+.ins .k{font-size:44px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.ins p{margin:10px 0 0;color:var(--ink-2);font-size:14px}
+.ins::after{content:"";position:absolute;right:-30px;top:-30px;width:90px;height:90px;border-radius:50%;background:var(--accent);opacity:.18}
+.tick{font-size:11.5px;fill:var(--muted);font-variant-numeric:tabular-nums}.tick.sub{font-size:10.5px}
+.endv{font-size:13px;font-weight:700;fill:var(--ink)} .endl{font-size:11.5px;fill:var(--ink-2)}
+.seg{font-size:11px;font-weight:700} .blab{font-size:12.5px;fill:var(--ink-2)} .bval{font-size:12.5px;font-weight:700;fill:var(--ink);font-variant-numeric:tabular-nums}
+.tt{position:fixed;pointer-events:none;opacity:0;transition:opacity .12s;background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--ring),0 10px 30px rgba(0,0,0,.18);border-radius:10px;padding:10px 12px;font-size:12.5px;z-index:50;min-width:180px}
+.tt .tr{display:flex;align-items:center;gap:8px;margin-top:4px;color:var(--ink-2)} .tt .tr b{margin-left:auto;color:var(--ink);font-variant-numeric:tabular-nums}
+.tt i{width:9px;height:9px;border-radius:3px;display:inline-block}
+.notes{margin-top:48px;color:var(--ink-2);font-size:13px;background:var(--surface);border-radius:14px;padding:14px 18px;box-shadow:0 0 0 1px var(--ring)}
+.notes summary{cursor:pointer;font-weight:650;color:var(--ink)} .notes li{margin:4px 0}
+footer{margin-top:28px;color:var(--muted);font-size:12px;text-align:center}
+:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+@media (max-width:1080px){.kpis{grid-template-columns:repeat(3,1fr)}.insights{grid-template-columns:1fr 1fr}.grid2,.grid2b{grid-template-columns:1fr}}
+@media (max-width:640px){.wrap{padding:0 16px 48px}.kpis,.insights{grid-template-columns:1fr}.toggle{position:static;margin-top:16px}.scroll{overflow-x:auto}}
+@media print{.toggle,.tabs{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">DPO · Matriz de Visitas Demarco</div>
+    <h1>Panorama de resultados <em id="yr-span"></em></h1>
+    <p class="lede" id="lede"></p>
+    <div class="meta" id="meta"></div>
+    <button class="toggle" id="theme" type="button">◐ Tema</button>
+  </header>
+
+  <section>
+    <div class="sec-h"><span class="num">01</span><h2>Em um olhar</h2><p id="kpi-cap"></p></div>
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section>
+    <div class="sec-h"><span class="num">02</span><h2>Ano contra ano</h2><p>Média anual de todas as auditorias do ano (1H + 2H). Variação em pontos percentuais (p.p.) e evolução relativa (%).</p></div>
+    <div class="card scroll"><table id="yoy"></table></div>
+  </section>
+
+  <section>
+    <div class="sec-h"><span class="num">03</span><h2>Trajetória semestral</h2><p>Evolução dos indicadores a cada ciclo de visitas.</p></div>
+    <div class="grid2">
+      <div class="card"><h3>Indicadores de aderência</h3><p class="cap">Média das unidades auditadas em cada semestre</p>
+        <div class="legend" id="lg-line"></div><div id="ch-line"></div></div>
+      <div class="card"><h3>Criticidade · Frota Distribuição</h3><p class="cap">Distribuição das auditorias por nível (1 = melhor)</p>
+        <div class="legend lv"></div><div id="ch-dist"></div></div>
+    </div>
+    <div class="grid2b" style="margin-top:16px">
+      <div class="card"><h3>Criticidade · Equipamentos Armazém</h3><p class="cap">Distribuição das auditorias por nível (1 = melhor)</p>
+        <div class="legend lv"></div><div id="ch-arm"></div></div>
+      <div class="card"><h3>Movimentação de nível · Frota</h3><p class="cap">Comparação entre as duas últimas auditorias de cada unidade</p><div id="mov"></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h"><span class="num">04</span><h2>Por geografia</h2><p>Resultado anual por Geo e variação do primeiro para o último ano.</p></div>
+    <div class="tabs" id="geo-tabs" role="group" aria-label="Indicador"></div>
+    <div class="grid2">
+      <div class="card scroll"><table class="heat" id="geo-table"></table></div>
+      <div class="card"><h3 id="geo-h"></h3><p class="cap" id="geo-cap"></p><div id="geo-bars"></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h"><span class="num">05</span><h2>Destaques</h2><p>Leituras calculadas diretamente da matriz.</p></div>
+    <div class="insights" id="ins"></div>
+  </section>
+
+  <div id="notes"></div>
+  <footer>Uso interno · Proibido o compartilhamento ou reprodução deste material sem autorização.</footer>
+</div>
+
+<script>/*__DATA__*/</script>
+<script>/*__CORE__*/</script>
+<script>
+(function(){
+const root=document.documentElement;
+document.getElementById('theme').onclick=()=>{const dark=root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;root.dataset.theme=dark?'light':'dark';dispatchEvent(new Event('resize'));};
+
+const Y0=YEARS[0], YN=YEARS[YEARS.length-1], YP=YEARS[YEARS.length-2];
+document.getElementById('yr-span').textContent=Y0+' → '+YN;
+const lastP=PERIODS[PERIODS.length-1];
+document.getElementById('lede').textContent=`Resultados consolidados das visitas DPO em ${UNITS.length} unidades, ao longo de ${PERIODS.length} ciclos semestrais — aderência ao Check MTE, cultura de manutenção, check ambiental e níveis de criticidade de frota e armazém.`;
+document.getElementById('meta').innerHTML=[
+  [R.length,'auditorias registradas'],[UNITS.length,'unidades'],[GEOS.length,'geografias'],[PERIODS.length,'ciclos semestrais'],[byPeriod(R,lastP).length,'auditorias em '+pLabel(lastP)]
+].map(([v,l])=>`<div><b>${v}</b>${l}</div>`).join('');
+
+/* 01 KPIs */
+const KP=[['mte','Check MTE'],['man','Cultura de Manutenção'],['amb','Check Ambiental'],['dist','Frota em Nível 1'],['arm','Armazém em Nível 1']];
+document.getElementById('kpi-cap').textContent=`Valor de ${YN} (todas as auditorias do ano), comparado a ${YP} e ${Y0}. Linha: evolução semestral.`;
+document.getElementById('kpis').innerHTML=KP.map(([k,l],i)=>{
+  const y=yoy(R,k), vN=y[y.length-1].v, vP=y[y.length-2].v, v0=y[0].v;
+  return `<div class="card kpi"><div class="lab">${l}</div><div class="big">${fmtPct(vN)}</div>
+  <div class="sub">${YN} · n=${y[y.length-1].n}</div>
+  <div class="rows"><div><span>vs ${YP}</span>${deltaHTML(vN-vP)}</div><div><span>vs ${Y0}</span>${deltaHTML(vN-v0)}</div></div>
+  <div class="spark" id="sp${i}"></div></div>`;}).join('');
+KP.forEach(([k],i)=>sparkline(document.getElementById('sp'+i),PERIODS.map(p=>metric(byPeriod(R,p),k)),'var(--s1)'));
+
+/* 02 Ano contra ano */
+const rowsY=[
+  ['mte','Check MTE','Aderência média',false],['man','Cultura de Manutenção','Média de conformidade',false],['amb','Check Ambiental','Aderência média',false],
+  ['dist','Frota Distribuição','% das auditorias em Nível 1',false],['arm','Equipamentos Armazém','% das auditorias em Nível 1',false]];
+let th=`<thead><tr><th>Indicador</th>${YEARS.map(y=>`<th>${y}</th>`).join('')}`;
+for(let i=1;i<YEARS.length;i++) th+=`<th>Δ ${YEARS[i]}×${YEARS[i-1]}</th>`;
+if(YEARS.length>2) th+=`<th>Δ ${YN}×${Y0}</th><th>Evolução</th>`;
+th+='</tr></thead>';
+let tb='<tbody>'+rowsY.map(([k,l,s])=>{
+  const y=yoy(R,k); const max=Math.max(...y.map(o=>o.v||0));
+  let r=`<tr><td><span class="ind">${l}<small>${s}</small></span></td>`;
+  r+=y.map(o=>`<td><span class="yv y${o.ano}"><b>${fmtPct(o.v)}</b><span class="bar" style="width:${(o.v||0)/max*70}px"></span></span></td>`).join('');
+  for(let i=1;i<y.length;i++) r+=`<td>${deltaHTML(y[i].v-y[i-1].v)}</td>`;
+  if(y.length>2) r+=`<td class="hl">${deltaHTML(y[y.length-1].v-y[0].v)}</td><td class="hl"><b>${fmtRel(y[0].v,y[y.length-1].v)}</b></td>`;
+  return r+'</tr>';}).join('');
+/* nível médio (quanto menor, melhor) */
+['dist','arm'].forEach(k=>{
+  const y=YEARS.map(a=>mean(byYear(R,a),k));
+  let r=`<tr><td><span class="ind">Nível médio · ${k==='dist'?'Frota':'Armazém'}<small>Escala 1 a 5 — quanto menor, melhor</small></span></td>`+y.map(v=>`<td><b>${fmtLvl(v)}</b></td>`).join('');
+  for(let i=1;i<y.length;i++) r+=`<td>${deltaHTML(y[i]-y[i-1],'abs',true)}</td>`;
+  if(y.length>2) r+=`<td class="hl">${deltaHTML(y[y.length-1]-y[0],'abs',true)}</td><td class="hl"><b>${fmtRel(y[0],y[y.length-1])}</b></td>`;
+  tb+=r+'</tr>';
+});
+document.getElementById('yoy').innerHTML=th+tb+'</tbody>';
+
+/* 03 Trajetória */
+const SER=[['mte','Check MTE','var(--s1)'],['man','Manutenção','var(--s2)'],['amb','Ambiental','var(--s3)']];
+document.getElementById('lg-line').innerHTML=SER.map(s=>`<span><i style="background:${s[2]}"></i>${s[1]}</span>`).join('');
+lineChart(document.getElementById('ch-line'),{x:PERIODS.map(pLabel),series:SER.map(([k,n,c])=>({name:n,color:c,vals:PERIODS.map(p=>mean(byPeriod(R,p),k))})),fmt:v=>fmtPct(v),height:300,aria:'Evolução semestral dos indicadores',
+  extraTip:i=>`<div class="tr" style="margin-top:8px">Auditorias no ciclo<b>${byPeriod(R,PERIODS[i]).length}</b></div>`});
+document.querySelectorAll('.legend.lv').forEach(e=>e.innerHTML=[1,2,3,4,5].map(n=>`<span><i style="background:var(--l${n})"></i>Nível ${n}</span>`).join(''));
+stacked100(document.getElementById('ch-dist'),{x:PERIODS.map(pLabel),counts:PERIODS.map(p=>lvlCounts(byPeriod(R,p),'dist')),height:300,aria:'Distribuição de níveis da frota'});
+stacked100(document.getElementById('ch-arm'),{x:PERIODS.map(pLabel),counts:PERIODS.map(p=>lvlCounts(byPeriod(R,p),'arm')),height:280,aria:'Distribuição de níveis do armazém'});
+
+/* movimentação de nível entre as duas últimas auditorias */
+let up=0,down=0,same=0,keep1=0,toN1=[];
+UNITS.forEach(u=>{const r=unitRows(u).filter(x=>x.dist!==null);if(r.length<2)return;const a=r[r.length-2].dist,b=r[r.length-1].dist;
+  if(b<a){up++; if(b===1) toN1.push(u);} else if(b>a) down++; else {same++; if(b===1) keep1++;}});
+hbars(document.getElementById('mov'),[
+  {label:'Melhoraram de nível',v:up,color:'var(--pos)',txt:up+' unidades'},
+  {label:'Mantiveram o nível',v:same,color:'var(--axis)',txt:same+' unidades'},
+  {label:'Pioraram de nível',v:down,color:'var(--neg)',txt:down+' unidades'}],{fmt:v=>v,rowH:44,labelW:170,aria:'Movimentação de nível'});
+document.getElementById('mov').insertAdjacentHTML('beforeend',`<p class="cap" style="margin-top:12px">${keep1} unidades mantiveram o Nível 1 e ${toN1.length} chegaram ao Nível 1 na última visita.</p>`);
+
+/* 04 Geo */
+const GT=[['mte','Check MTE'],['man','Manutenção'],['amb','Ambiental'],['dist','Frota em N1'],['arm','Armazém em N1']];
+let gk='mte';
+const tabs=document.getElementById('geo-tabs');
+tabs.innerHTML=GT.map(([k,l])=>`<button type="button" data-k="${k}" aria-pressed="${k===gk}">${l}</button>`).join('');
+tabs.onclick=e=>{const b=e.target.closest('button');if(!b)return;gk=b.dataset.k;tabs.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawGeo();};
+function drawGeo(){
+  const lab=GT.find(g=>g[0]===gk)[1];
+  const rows=GEOS.map(g=>{const rr=R.filter(r=>r.geo===g);return {g,y:YEARS.map(a=>metric(byYear(rr,a),gk)),n:YEARS.map(a=>count(byYear(rr,a),gk))};});
+  const allv=rows.flatMap(r=>r.y).filter(v=>v!==null),lo=Math.min(...allv),hi=Math.max(...allv);
+  document.getElementById('geo-table').innerHTML=`<thead><tr><th>Geo</th>${YEARS.map(y=>`<th>${y}</th>`).join('')}<th>Δ ${YN}×${Y0}</th></tr></thead><tbody>`+
+    rows.map(r=>`<tr><td><b>${esc(r.g)}</b></td>${r.y.map((v,i)=>{const c=seqColor(v,lo,hi);return `<td class="c" style="background:${c||'transparent'};color:${c?inkOn(c):'var(--ink)'}" title="n=${r.n[i]}">${fmtPct(v)}</td>`}).join('')}<td>${deltaHTML(r.y[r.y.length-1]!==null&&r.y[0]!==null?r.y[r.y.length-1]-r.y[0]:NaN)}</td></tr>`).join('')+'</tbody>';
+  const items=rows.filter(r=>r.y[0]!==null&&r.y[r.y.length-1]!==null).map(r=>({label:r.g,v:r.y[r.y.length-1]-r.y[0],txt:fmtPP(r.y[r.y.length-1]-r.y[0]),
+    tip:`<b>${esc(r.g)} · ${lab}</b>`+YEARS.map((a,i)=>`<div class="tr">${a}<b>${fmtPct(r.y[i])}</b></div>`).join('')})).sort((a,b)=>b.v-a.v);
+  document.getElementById('geo-h').textContent=`Variação ${Y0} → ${YN} · ${lab}`;
+  document.getElementById('geo-cap').textContent='Em pontos percentuais; verde = melhora, vermelho = queda';
+  hbars(document.getElementById('geo-bars'),items,{diverging:true,fmt:fmtPP,rowH:36,labelW:70,aria:'Variação por geografia'});
+}
+drawGeo();
+
+/* 05 Destaques */
+const ins=[];
+const y=k=>yoy(R,k);
+const best=PCT_KEYS.map(k=>({k,d:y(k)[y(k).length-1].v-y(k)[0].v})).sort((a,b)=>b.d-a.d)[0];
+ins.push([fmtPP(best.d),`foi a variação de <b>${IND[best.k].long}</b> entre ${Y0} e ${YN} — o maior avanço entre os indicadores de aderência.`]);
+const geoGain=GEOS.map(g=>{const rr=R.filter(r=>r.geo===g);const a=metric(byYear(rr,Y0),'amb'),b=metric(byYear(rr,YN),'amb');return {g,d:(a!==null&&b!==null)?b-a:null};}).filter(o=>o.d!==null).sort((a,b)=>b.d-a.d)[0];
+if(geoGain) ins.push([esc(geoGain.g),`é a geografia que mais evoluiu no Check Ambiental: ${fmtPP(geoGain.d)} de ${Y0} para ${YN}.`]);
+const n1N=y('dist')[y('dist').length-1].v, n10=y('dist')[0].v;
+ins.push([fmtPct(n1N,0),`das auditorias de frota em ${YN} ficaram em Nível 1 (melhor resultado), contra ${fmtPct(n10,0)} em ${Y0}.`]);
+const lp=byPeriod(R,lastP); const top=lp.filter(r=>r.mte===1).length;
+ins.push([top,`unidades atingiram 100% no Check MTE em ${pLabel(lastP)}, de ${count(lp,'mte')} auditadas no ciclo.`]);
+const full=lp.filter(r=>r.dist===1&&(r.arm===1||r.arm===null)&&r.man===1).length;
+ins.push([full,`unidades fecharam ${pLabel(lastP)} com Frota em Nível 1, Armazém em Nível 1 (quando auditado) e 100% em Manutenção.`]);
+ins.push([up,`unidades melhoraram o nível de frota em relação à visita anterior; ${down} pioraram.`]);
+document.getElementById('ins').innerHTML=ins.map(([k,t])=>`<div class="ins"><div class="k">${k}</div><p>${t}</p></div>`).join('');
+document.getElementById('notes').innerHTML=notesHTML();
+})();
+</script>
+</body>
+</html>
