@@ -23,6 +23,7 @@ GRUPOS_IGNORADOS = {"Gente"}          # pergunta de acessibilidade cadastrada po
 ALIAS_UNIDADE = {               # nome no app de auditoria -> nome na Matriz (sem acento, maiúsculo)
     "CD MACACU": "CDI MACACU",
     "CD BH": "CD BELO HORIZONTE",
+    "CD BH AS": "CD BELO HORIZONTE",
     "AS GOIANIA": "CD GOIANIA",
     "CDL PERNAMBUCO": "CD RECIFE",
 }
@@ -37,6 +38,7 @@ UNIFICAR_UNIDADE = {
     "CDR CAMACARI": "CDL CAMAÇARI", "CDL CAMACARI": "CDL CAMAÇARI",
     "CD CEARA": "CD CEARÁ",
     "CDI EQUATORIAL": "CD SÃO LUÍS", "CD SAO LUIS": "CD SÃO LUÍS",
+    "AS MG": "CD BELO HORIZONTE",
 }
 # Geo correta da unidade unificada (chave sem acento)
 GEO_FIXA = {"CD RECIFE": "NE", "CD ARACAJU": "NE", "CD CUIABA": "CO", "CDL OSASCO": "SP",
