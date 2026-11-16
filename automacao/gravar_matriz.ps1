@@ -23,8 +23,8 @@ try {
         $r = $nova.Range
         $r.Cells.Item(1,1).Formula2 = '=XLOOKUP(Tabela1[[#This Row],[Unidade]],Planilha3!B:B,Planilha3!A:A)'
         $r.Cells.Item(1,2).Value2 = [string]$d.unidade
-        $r.Cells.Item(1,3).Value2 = $Ano
-        $r.Cells.Item(1,4).Value2 = $Sem
+        $r.Cells.Item(1,3).Value2 = [double]$Ano
+        $r.Cells.Item(1,4).Value2 = [string]::Copy([string]$Sem)
         $r.Cells.Item(1,5).Value2 = [double]$d.dist
         $map = @{6 = $d.arm; 7 = $d.mte; 8 = $d.man; 9 = $d.amb}
         foreach ($c in 6..9) { if ($null -ne $map[$c]) { $r.Cells.Item(1,$c).Value2 = [double]$map[$c] } else { [void]$r.Cells.Item(1,$c).ClearContents() } }
@@ -32,7 +32,7 @@ try {
         Write-Output "  + linha $($r.Row): $($d.unidade)"
     }
     $xl.Calculation = -4105; $xl.CalculateFull(); $wb.Save(); $ok = $true
-} catch { Write-Output "ERRO: $($_.Exception.Message)" }
+} catch { Write-Output "ERRO: $($_.Exception.Message) (linha $($_.InvocationInfo.ScriptLineNumber): $($_.InvocationInfo.Line.Trim()))" }
 finally {
     if ($wb) { try { $wb.Close($false) } catch {} }
     try { $xl.Quit() } catch {}
